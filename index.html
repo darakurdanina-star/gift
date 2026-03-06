@@ -571,7 +571,7 @@
             
             // Сбрасываем состояние игры
             gameStage = 0;
-            hintIndex = 0;
+            hintIndex = 0;  // ВАЖНО: начинаем с ромашки
             canTransition = false;
             
             // Показываем кнопку старта
@@ -582,7 +582,7 @@
             document.getElementById('korzina').classList.add('hidden');
             document.getElementById('counters').classList.add('hidden');
             
-            // Полностью сбрасываем первые цветы (убираем found и hidden)
+            // Полностью сбрасываем первые цветы
             document.querySelectorAll('.flower').forEach(f => {
                 f.classList.remove('hidden', 'found');
             });
@@ -613,7 +613,7 @@
             fullReset(); // Сначала полный сброс
             document.getElementById('start-btn').classList.add('hidden');
             gameStage = 1;
-            hintIndex = 0;
+            hintIndex = 0; // Начинаем с ромашки
             canTransition = false;
             playSound('Zvuk13');
             
@@ -641,8 +641,6 @@
             } else if (hintIndex === 2) {
                 playSound('Zvuk7');
             }
-            
-            // Убрали alert с текстом!
         }
 
         // ========== ПРОВЕРКА ЦВЕТКА (первый этап) ==========
@@ -660,10 +658,9 @@
                 playSound(soundName, function() {
                     if (hintIndex === 2) {
                         canTransition = true;
-                        if (hintIndex >= 2) {
-                            playSound('Zvuk9');
-                            startSecondStage();
-                        }
+                        // После звука тюльпана переходим на второй этап
+                        playSound('Zvuk9');
+                        startSecondStage();
                     }
                 });
                 
@@ -674,6 +671,7 @@
                     document.getElementById('konvert').classList.remove('bounce');
                 }, 500);
                 
+                // Увеличиваем hintIndex для следующего цветка
                 if (flowerName !== 'tulpan') {
                     setTimeout(() => {
                         hintIndex++;
@@ -682,6 +680,8 @@
                         }
                     }, 800);
                 }
+                // Для тюльпана переход произойдёт в callback звука
+                
             } else {
                 playSound('Zvuk4');
                 element.classList.add('shake');
@@ -705,7 +705,7 @@
             document.getElementById('konvert').classList.add('hidden');
             document.querySelectorAll('.flower').forEach(f => f.classList.add('hidden'));
             
-            // Показываем все цветы второго этапа (сброшенные)
+            // Показываем все цветы второго этапа
             document.querySelectorAll('.grid-flower').forEach(f => {
                 f.classList.remove('hidden');
                 f.classList.remove('found');
