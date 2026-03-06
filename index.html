@@ -217,7 +217,7 @@
         }
 
         .grid-flower.hidden {
-            display: none;
+            display: none !important; /* Важно - скрываем до второго этапа */
         }
 
         /* ПОЗИЦИИ ДЛЯ 6 ЦВЕТОВ ПЕРВОГО ЭТАПА */
@@ -434,7 +434,7 @@
         <img src="vasilek.png" class="flower" id="flower-vasilek" data-name="vasilek" onclick="checkFlower('vasilek', this)">
 
         <!-- ======== ВТОРОЙ ЭТАП: 24 ЦВЕТА (8 каждого вида) ======== -->
-        <!-- Все они скрыты изначально (hidden) -->
+        <!-- ВСЕ ОНИ СКРЫТЫ КЛАССОМ hidden ДО ВТОРОГО ЭТАПА -->
         
         <!-- 8 ромашек -->
         <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-1" data-name="romashka" onclick="collectGridFlower(this)">
@@ -539,7 +539,9 @@
             
             const gridFlowers = document.querySelectorAll('.grid-flower');
             gridFlowers.forEach((flower, index) => {
-                flower.classList.add(positions[index]);
+                // Убираем все предыдущие классы позиций
+                flower.className = 'grid-flower hidden'; // Сбрасываем
+                flower.classList.add(positions[index]); // Добавляем новую позицию
             });
         }
 
@@ -555,8 +557,10 @@
             // Показываем только первые 6 цветов
             document.querySelectorAll('.flower').forEach(f => f.classList.remove('hidden'));
             
-            // Скрываем все 24 цветка второго этапа
-            document.querySelectorAll('.grid-flower').forEach(f => f.classList.add('hidden'));
+            // Убеждаемся, что все 24 цветка второго этапа скрыты
+            document.querySelectorAll('.grid-flower').forEach(f => {
+                f.classList.add('hidden');
+            });
             
             // Расставляем позиции
             positionGridFlowers();
@@ -639,8 +643,10 @@
             // Прячем первые 6 цветов
             document.querySelectorAll('.flower').forEach(f => f.classList.add('hidden'));
             
-            // Показываем 24 цветка
-            document.querySelectorAll('.grid-flower').forEach(f => f.classList.remove('hidden'));
+            // Показываем 24 цветка второго этапа
+            document.querySelectorAll('.grid-flower').forEach(f => {
+                f.classList.remove('hidden');
+            });
             
             document.getElementById('korzina').classList.remove('hidden');
             document.getElementById('counters').classList.remove('hidden');
