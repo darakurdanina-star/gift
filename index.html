@@ -569,10 +569,17 @@
             document.getElementById('bouquet-screen').style.display = 'none';
             document.getElementById('gift-screen').style.display = 'none';
             
-            // Сбрасываем состояние игры
+            // Сбрасываем состояние игры В ПОЛНОСТЬЮ НОВОЕ СОСТОЯНИЕ
             gameStage = 0;
             hintIndex = 0;  // ВАЖНО: начинаем с ромашки
             canTransition = false;
+            
+            // Полностью сбрасываем счётчики на исходные значения
+            leftToCollect = { 
+                romashka: 4, 
+                rosa: 2, 
+                tulpan: 5 
+            };
             
             // Показываем кнопку старта
             document.getElementById('start-btn').classList.remove('hidden');
@@ -582,7 +589,7 @@
             document.getElementById('korzina').classList.add('hidden');
             document.getElementById('counters').classList.add('hidden');
             
-            // Полностью сбрасываем первые цветы
+            // Полностью сбрасываем первые цветы - убираем found и hidden
             document.querySelectorAll('.flower').forEach(f => {
                 f.classList.remove('hidden', 'found');
             });
@@ -604,7 +611,6 @@
             document.getElementById('counter-rosa').classList.remove('completed');
             document.getElementById('counter-tulpan').classList.remove('completed');
             
-            leftToCollect = { romashka: 4, rosa: 2, tulpan: 5 };
             updateCounters();
         }
 
@@ -648,6 +654,7 @@
             if (gameStage !== 1) return;
             if (element.classList.contains('found')) return;
             
+            // Проверяем, правильный ли цветок для текущего hintIndex
             if (flowerName === correctFlowers[hintIndex]) {
                 // Правильный ответ
                 let soundName = '';
@@ -655,34 +662,33 @@
                 else if (hintIndex === 1) soundName = 'Zvuk6';
                 else if (hintIndex === 2) soundName = 'Zvuk8';
                 
-                playSound(soundName, function() {
-                    if (hintIndex === 2) {
-                        canTransition = true;
-                        // После звука тюльпана переходим на второй этап
-                        playSound('Zvuk9');
-                        startSecondStage();
-                    }
-                });
-                
+                // Отмечаем цветок как найденный (он исчезнет)
                 element.classList.add('found');
                 
+                // Анимация конверта
                 document.getElementById('konvert').classList.add('bounce');
                 setTimeout(() => {
                     document.getElementById('konvert').classList.remove('bounce');
                 }, 500);
                 
-                // Увеличиваем hintIndex для следующего цветка
-                if (flowerName !== 'tulpan') {
-                    setTimeout(() => {
-                        hintIndex++;
-                        if (hintIndex < 3) {
-                            document.getElementById('konvert').classList.remove('hidden');
-                        }
-                    }, 800);
-                }
-                // Для тюльпана переход произойдёт в callback звука
+                // Воспроизводим звук
+                playSound(soundName, function() {
+                    // После звука увеличиваем hintIndex
+                    hintIndex++;
+                    
+                    // Проверяем, все ли цветы угаданы
+                    if (hintIndex >= 3) {
+                        // Все три цветка угаданы
+                        playSound('Zvuk9');
+                        startSecondStage();
+                    } else {
+                        // Показываем конверт для следующей подсказки
+                        document.getElementById('konvert').classList.remove('hidden');
+                    }
+                });
                 
             } else {
+                // Неправильный ответ
                 playSound('Zvuk4');
                 element.classList.add('shake');
                 setTimeout(() => {
@@ -698,7 +704,6 @@
         // ========== ВТОРОЙ ЭТАП ==========
         function startSecondStage() {
             if (gameStage !== 1) return;
-            if (hintIndex === 2 && !canTransition) return;
             
             gameStage = 2;
             
@@ -714,6 +719,7 @@
             document.getElementById('korzina').classList.remove('hidden');
             document.getElementById('counters').classList.remove('hidden');
             
+            // Убеждаемся, что счётчики правильные
             leftToCollect = { romashka: 4, rosa: 2, tulpan: 5 };
             updateCounters();
         }
