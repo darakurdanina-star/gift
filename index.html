@@ -166,6 +166,7 @@
             display: none;
         }
 
+        /* ЦВЕТЫ ДЛЯ ПЕРВОГО ЭТАПА - по 1 каждого */
         .flower {
             position: absolute;
             width: 10%;
@@ -192,24 +193,7 @@
             display: none;
         }
 
-        /* ПОЗИЦИИ ДЛЯ 6 ЦВЕТОВ (первый этап) */
-        #flower-romashka { left: 10%; top: 30%; }
-        #flower-rosa { left: 30%; top: 40%; }
-        #flower-tulpan { left: 50%; top: 35%; }
-        #flower-gvozdika { left: 70%; top: 45%; }
-        #flower-pion { left: 20%; top: 60%; }
-        #flower-vasilek { left: 80%; top: 25%; }
-
-        /* КОНТЕЙНЕР ДЛЯ 24 ЦВЕТОВ (второй этап) */
-        .flowers-grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-        }
-
+        /* ЦВЕТЫ ДЛЯ ВТОРОГО ЭТАПА - по 8 каждого */
         .grid-flower {
             position: absolute;
             width: 8%;
@@ -235,6 +219,40 @@
         .grid-flower.hidden {
             display: none;
         }
+
+        /* ПОЗИЦИИ ДЛЯ 6 ЦВЕТОВ ПЕРВОГО ЭТАПА */
+        #flower-romashka { left: 10%; top: 30%; }
+        #flower-rosa { left: 30%; top: 40%; }
+        #flower-tulpan { left: 50%; top: 35%; }
+        #flower-gvozdika { left: 70%; top: 45%; }
+        #flower-pion { left: 20%; top: 60%; }
+        #flower-vasilek { left: 80%; top: 25%; }
+
+        /* ПОЗИЦИИ ДЛЯ 24 ЦВЕТОВ ВТОРОГО ЭТАПА */
+        .pos-1 { left: 5%; top: 25%; }
+        .pos-2 { left: 21%; top: 25%; }
+        .pos-3 { left: 37%; top: 25%; }
+        .pos-4 { left: 53%; top: 25%; }
+        .pos-5 { left: 69%; top: 25%; }
+        .pos-6 { left: 85%; top: 25%; }
+        .pos-7 { left: 5%; top: 40%; }
+        .pos-8 { left: 21%; top: 40%; }
+        .pos-9 { left: 37%; top: 40%; }
+        .pos-10 { left: 53%; top: 40%; }
+        .pos-11 { left: 69%; top: 40%; }
+        .pos-12 { left: 85%; top: 40%; }
+        .pos-13 { left: 5%; top: 55%; }
+        .pos-14 { left: 21%; top: 55%; }
+        .pos-15 { left: 37%; top: 55%; }
+        .pos-16 { left: 53%; top: 55%; }
+        .pos-17 { left: 69%; top: 55%; }
+        .pos-18 { left: 85%; top: 55%; }
+        .pos-19 { left: 5%; top: 70%; }
+        .pos-20 { left: 21%; top: 70%; }
+        .pos-21 { left: 37%; top: 70%; }
+        .pos-22 { left: 53%; top: 70%; }
+        .pos-23 { left: 69%; top: 70%; }
+        .pos-24 { left: 85%; top: 70%; }
 
         #bouquet-screen {
             position: absolute;
@@ -394,7 +412,7 @@
             <img src="korzina.png" alt="Корзина">
         </div>
 
-        <!-- СЧЁТЧИКИ (для второго этапа - по 8) -->
+        <!-- СЧЁТЧИКИ -->
         <div class="counters hidden" id="counters">
             <div class="counter-item" id="counter-romashka">
                 <img src="romashka.png" alt="Ромашка"> <span id="romashka-left">8</span>
@@ -407,7 +425,7 @@
             </div>
         </div>
 
-        <!-- 6 ЦВЕТОВ ДЛЯ ПЕРВОГО ЭТАПА (ПО 1 КАЖДОГО) -->
+        <!-- ======== ПЕРВЫЙ ЭТАП: 6 ЦВЕТОВ (по 1 каждого) ======== -->
         <img src="romashka.png" class="flower" id="flower-romashka" data-name="romashka" onclick="checkFlower('romashka', this)">
         <img src="rosa.png" class="flower" id="flower-rosa" data-name="rosa" onclick="checkFlower('rosa', this)">
         <img src="tulpan.png" class="flower" id="flower-tulpan" data-name="tulpan" onclick="checkFlower('tulpan', this)">
@@ -415,8 +433,38 @@
         <img src="pion.png" class="flower" id="flower-pion" data-name="pion" onclick="checkFlower('pion', this)">
         <img src="vasilek.png" class="flower" id="flower-vasilek" data-name="vasilek" onclick="checkFlower('vasilek', this)">
 
-        <!-- КОНТЕЙНЕР ДЛЯ 24 ЦВЕТОВ (второй этап) -->
-        <div id="grid-flowers" class="flowers-grid hidden"></div>
+        <!-- ======== ВТОРОЙ ЭТАП: 24 ЦВЕТА (8 каждого вида) ======== -->
+        <!-- Все они скрыты изначально (hidden) -->
+        
+        <!-- 8 ромашек -->
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-1" data-name="romashka" onclick="collectGridFlower(this)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-2" data-name="romashka" onclick="collectGridFlower(this)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-3" data-name="romashka" onclick="collectGridFlower(this)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-4" data-name="romashka" onclick="collectGridFlower(this)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-5" data-name="romashka" onclick="collectGridFlower(this)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-6" data-name="romashka" onclick="collectGridFlower(this)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-7" data-name="romashka" onclick="collectGridFlower(this)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-8" data-name="romashka" onclick="collectGridFlower(this)">
+
+        <!-- 8 роз -->
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-1" data-name="rosa" onclick="collectGridFlower(this)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-2" data-name="rosa" onclick="collectGridFlower(this)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-3" data-name="rosa" onclick="collectGridFlower(this)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-4" data-name="rosa" onclick="collectGridFlower(this)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-5" data-name="rosa" onclick="collectGridFlower(this)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-6" data-name="rosa" onclick="collectGridFlower(this)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-7" data-name="rosa" onclick="collectGridFlower(this)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-8" data-name="rosa" onclick="collectGridFlower(this)">
+
+        <!-- 8 тюльпанов -->
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-1" data-name="tulpan" onclick="collectGridFlower(this)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-2" data-name="tulpan" onclick="collectGridFlower(this)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-3" data-name="tulpan" onclick="collectGridFlower(this)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-4" data-name="tulpan" onclick="collectGridFlower(this)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-5" data-name="tulpan" onclick="collectGridFlower(this)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-6" data-name="tulpan" onclick="collectGridFlower(this)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-7" data-name="tulpan" onclick="collectGridFlower(this)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-8" data-name="tulpan" onclick="collectGridFlower(this)">
 
         <!-- ЭКРАН БУКЕТА -->
         <div id="bouquet-screen">
@@ -440,7 +488,7 @@
         let hintIndex = 0; // 0 - ромашка, 1 - роза, 2 - тюльпан
         const correctFlowers = ['romashka', 'rosa', 'tulpan'];
         
-        // Счётчики для сбора (по 8 каждого - ТОЛЬКО ДЛЯ ВТОРОГО ЭТАПА)
+        // Счётчики для сбора (по 8 каждого)
         let leftToCollect = {
             romashka: 8,
             rosa: 8,
@@ -480,41 +528,18 @@
             }
         }
 
-        // ========== СОЗДАНИЕ 24 ЦВЕТОВ ДЛЯ ВТОРОГО ЭТАПА ==========
-        function createGridFlowers() {
-            const container = document.getElementById('grid-flowers');
-            container.innerHTML = '';
-            
-            const flowerTypes = [
-                { name: 'romashka', file: 'romashka.png', count: 8 },
-                { name: 'rosa', file: 'rosa.png', count: 8 },
-                { name: 'tulpan', file: 'tulpan.png', count: 8 }
+        // ========== РАССТАВЛЯЕМ ПОЗИЦИИ ДЛЯ 24 ЦВЕТОВ ==========
+        function positionGridFlowers() {
+            const positions = [
+                'pos-1', 'pos-2', 'pos-3', 'pos-4', 'pos-5', 'pos-6',
+                'pos-7', 'pos-8', 'pos-9', 'pos-10', 'pos-11', 'pos-12',
+                'pos-13', 'pos-14', 'pos-15', 'pos-16', 'pos-17', 'pos-18',
+                'pos-19', 'pos-20', 'pos-21', 'pos-22', 'pos-23', 'pos-24'
             ];
             
-            let index = 0;
-            flowerTypes.forEach(type => {
-                for (let i = 0; i < type.count; i++) {
-                    const img = document.createElement('img');
-                    img.src = type.file;
-                    img.className = 'grid-flower';
-                    img.dataset.name = type.name;
-                    img.onclick = function() { collectGridFlower(this); };
-                    
-                    // Позиции для 24 цветов (сетка 6×4)
-                    const row = Math.floor(index / 6);
-                    const col = index % 6;
-                    
-                    // 6 колонок: 5%, 21%, 37%, 53%, 69%, 85%
-                    // 4 ряда: 25%, 40%, 55%, 70%
-                    const leftPositions = [5, 21, 37, 53, 69, 85];
-                    const topPositions = [25, 40, 55, 70];
-                    
-                    img.style.left = leftPositions[col] + '%';
-                    img.style.top = topPositions[row] + '%';
-                    
-                    container.appendChild(img);
-                    index++;
-                }
+            const gridFlowers = document.querySelectorAll('.grid-flower');
+            gridFlowers.forEach((flower, index) => {
+                flower.classList.add(positions[index]);
             });
         }
 
@@ -527,14 +552,14 @@
             
             document.getElementById('konvert').classList.remove('hidden');
             
-            // Показываем первые 6 цветов (по 1 каждого)
+            // Показываем только первые 6 цветов
             document.querySelectorAll('.flower').forEach(f => f.classList.remove('hidden'));
             
-            // Скрываем сетку с 24 цветами
-            document.getElementById('grid-flowers').classList.add('hidden');
+            // Скрываем все 24 цветка второго этапа
+            document.querySelectorAll('.grid-flower').forEach(f => f.classList.add('hidden'));
             
-            // Создаём цветы для второго этапа (24 штуки), но они пока скрыты
-            createGridFlowers();
+            // Расставляем позиции
+            positionGridFlowers();
         }
 
         // ========== ПОДСКАЗКИ ==========
@@ -614,13 +639,12 @@
             // Прячем первые 6 цветов
             document.querySelectorAll('.flower').forEach(f => f.classList.add('hidden'));
             
-            // Показываем сетку с 24 цветами
-            document.getElementById('grid-flowers').classList.remove('hidden');
+            // Показываем 24 цветка
+            document.querySelectorAll('.grid-flower').forEach(f => f.classList.remove('hidden'));
             
             document.getElementById('korzina').classList.remove('hidden');
             document.getElementById('counters').classList.remove('hidden');
             
-            // Сброс счётчиков (по 8 каждого)
             leftToCollect = { romashka: 8, rosa: 8, tulpan: 8 };
             updateCounters();
         }
@@ -706,8 +730,11 @@
                 f.classList.remove('found');
             });
             
-            // Очищаем сетку (она создастся заново при старте)
-            document.getElementById('grid-flowers').innerHTML = '';
+            // Прячем 24 цветка
+            document.querySelectorAll('.grid-flower').forEach(f => {
+                f.classList.add('hidden');
+                f.classList.remove('found');
+            });
             
             document.getElementById('counter-romashka').classList.remove('completed');
             document.getElementById('counter-rosa').classList.remove('completed');
