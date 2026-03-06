@@ -116,6 +116,7 @@
             z-index: 15;
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
             cursor: pointer;
+            pointer-events: none; /* Корзина не перехватывает события */
         }
 
         .korzina-container img {
@@ -197,8 +198,8 @@
             position: absolute;
             width: 8%;
             height: auto;
-            cursor: pointer;
-            touch-action: manipulation;
+            cursor: grab;
+            touch-action: none;
             user-select: none;
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
             z-index: 10;
@@ -206,6 +207,7 @@
         }
 
         .grid-flower:active {
+            cursor: grabbing;
             transform: scale(1.1);
         }
 
@@ -221,7 +223,8 @@
 
         .grid-flower.dragging {
             transition: none;
-            z-index: 30;
+            z-index: 100;
+            cursor: grabbing;
         }
 
         #flower-romashka { left: 10%; top: 30%; }
@@ -493,6 +496,7 @@
         let draggedFlower = null;
         let isDragging = false;
         let startX, startY, startLeft, startTop;
+        let originalClasses = ''; // Для сохранения исходных классов
 
         // Звуки
         const sounds = {
@@ -544,6 +548,8 @@
             
             const gridFlowers = document.querySelectorAll('.grid-flower');
             gridFlowers.forEach((flower, index) => {
+                // Сохраняем класс позиции в data-атрибут для возврата
+                flower.dataset.posClass = positions[index];
                 flower.className = 'grid-flower hidden';
                 flower.classList.add(positions[index]);
             });
@@ -674,6 +680,9 @@
             isDragging = true;
             draggedFlower.classList.add('dragging');
             
+            // Сохраняем исходные классы для возврата
+            originalClasses = draggedFlower.className;
+            
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
             
@@ -756,8 +765,9 @@
                         }, 500);
                     }
                 } else {
-                    // Лишний цветок - звук 10
+                    // Лишний цветок - звук 10 и возврат на место
                     playSound('Zvuk10');
+                    // Возвращаем на исходную позицию, не добавляя в корзину
                     returnFlowerToStart(draggedFlower);
                 }
             } else {
@@ -778,9 +788,8 @@
         }
 
         function returnFlowerToStart(flower) {
-            // Возвращаем на исходную позицию по классу
-            const classes = flower.className.split(' ');
-            const posClass = classes.find(c => c.startsWith('pos-'));
+            // Возвращаем на исходную позицию по сохранённому классу
+            const posClass = flower.dataset.posClass;
             if (posClass) {
                 flower.className = 'grid-flower';
                 flower.classList.add(posClass);
