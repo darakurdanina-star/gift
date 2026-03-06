@@ -367,16 +367,9 @@
             box-shadow: 0 2px 0 #2E7D32;
         }
 
+        /* Убираем кнопку "ИГРАТЬ ЕЩЁ" - она больше не нужна */
         .again-button {
-            padding: 12px 30px;
-            font-size: 20px;
-            background: #FF69B4;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #C71585;
-            margin-top: 20px;
+            display: none;
         }
 
         @keyframes shake {
@@ -407,16 +400,20 @@
     <div id="game-container">
         <div class="background-layer"></div>
 
+        <!-- КНОПКА СТАРТ -->
         <button class="start-button" id="start-btn" onclick="startGame()">🌷 СДЕЛАТЬ ПОДАРОК МАМЕ 🌷</button>
 
+        <!-- КОНВЕРТ -->
         <div class="konvert-container hidden" id="konvert" onclick="nextHint()">
             <img src="konvert.png" alt="Конверт">
         </div>
 
+        <!-- КОРЗИНА -->
         <div class="korzina-container hidden" id="korzina">
             <img src="korzina.png" alt="Корзина">
         </div>
 
+        <!-- СЧЁТЧИКИ -->
         <div class="counters hidden" id="counters">
             <div class="counter-item" id="counter-romashka">
                 <img src="romashka.png" alt="Ромашка"> <span id="romashka-left">4</span>
@@ -468,17 +465,19 @@
         <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-7" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
         <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-8" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
 
+        <!-- ЭКРАН БУКЕТА -->
         <div id="bouquet-screen">
             <img src="buket.png" alt="Букет" class="bouquet-img">
             <div class="bouquet-text">Покажи открытку маме!</div>
             <button class="next-button" onclick="showGiftScreen()">ДАЛЬШЕ</button>
         </div>
 
+        <!-- ЭКРАН ПОДАРКА -->
         <div id="gift-screen">
             <img src="gift.png" alt="Подарок" class="gift-img">
             <div class="gift-text">🌷 Нарисуй свои цветы для мамы! 🌷</div>
             <button class="pdf-button" onclick="downloadPDF()">🖨️ СКАЧАТЬ ДЕТАЛИ</button>
-            <button class="again-button" onclick="resetGame()">🌟 ИГРАТЬ ЕЩЁ 🌟</button>
+            <!-- Кнопка "ИГРАТЬ ЕЩЁ" удалена -->
         </div>
     </div>
 
@@ -486,7 +485,6 @@
         // ========== ПЕРЕМЕННЫЕ ==========
         let gameStage = 0; // 0 - старт, 1 - угадай, 2 - сбор
         let hintIndex = 0; // 0 - ромашка, 1 - роза, 2 - тюльпан
-        let canTransition = false;
         const correctFlowers = ['romashka', 'rosa', 'tulpan'];
         
         // Счётчики для сбора
@@ -569,12 +567,11 @@
             document.getElementById('bouquet-screen').style.display = 'none';
             document.getElementById('gift-screen').style.display = 'none';
             
-            // Сбрасываем состояние игры В ПОЛНОСТЬЮ НОВОЕ СОСТОЯНИЕ
+            // Сбрасываем состояние игры
             gameStage = 0;
-            hintIndex = 0;  // ВАЖНО: начинаем с ромашки
-            canTransition = false;
+            hintIndex = 0;
             
-            // Полностью сбрасываем счётчики на исходные значения
+            // Полностью сбрасываем счётчики
             leftToCollect = { 
                 romashka: 4, 
                 rosa: 2, 
@@ -589,7 +586,7 @@
             document.getElementById('korzina').classList.add('hidden');
             document.getElementById('counters').classList.add('hidden');
             
-            // Полностью сбрасываем первые цветы - убираем found и hidden
+            // Полностью сбрасываем первые цветы
             document.querySelectorAll('.flower').forEach(f => {
                 f.classList.remove('hidden', 'found');
             });
@@ -616,11 +613,10 @@
 
         // ========== СТАРТ ==========
         function startGame() {
-            fullReset(); // Сначала полный сброс
+            fullReset();
             document.getElementById('start-btn').classList.add('hidden');
             gameStage = 1;
-            hintIndex = 0; // Начинаем с ромашки
-            canTransition = false;
+            hintIndex = 0;
             playSound('Zvuk13');
             
             document.getElementById('konvert').classList.remove('hidden');
@@ -639,7 +635,6 @@
             
             document.getElementById('konvert').classList.add('hidden');
             
-            // Только звук, без текста!
             if (hintIndex === 0) {
                 playSound('Zvuk2');
             } else if (hintIndex === 1) {
@@ -654,7 +649,6 @@
             if (gameStage !== 1) return;
             if (element.classList.contains('found')) return;
             
-            // Проверяем, правильный ли цветок для текущего hintIndex
             if (flowerName === correctFlowers[hintIndex]) {
                 // Правильный ответ
                 let soundName = '';
@@ -662,33 +656,25 @@
                 else if (hintIndex === 1) soundName = 'Zvuk6';
                 else if (hintIndex === 2) soundName = 'Zvuk8';
                 
-                // Отмечаем цветок как найденный (он исчезнет)
                 element.classList.add('found');
                 
-                // Анимация конверта
                 document.getElementById('konvert').classList.add('bounce');
                 setTimeout(() => {
                     document.getElementById('konvert').classList.remove('bounce');
                 }, 500);
                 
-                // Воспроизводим звук
                 playSound(soundName, function() {
-                    // После звука увеличиваем hintIndex
                     hintIndex++;
                     
-                    // Проверяем, все ли цветы угаданы
                     if (hintIndex >= 3) {
-                        // Все три цветка угаданы
                         playSound('Zvuk9');
                         startSecondStage();
                     } else {
-                        // Показываем конверт для следующей подсказки
                         document.getElementById('konvert').classList.remove('hidden');
                     }
                 });
                 
             } else {
-                // Неправильный ответ
                 playSound('Zvuk4');
                 element.classList.add('shake');
                 setTimeout(() => {
@@ -719,7 +705,6 @@
             document.getElementById('korzina').classList.remove('hidden');
             document.getElementById('counters').classList.remove('hidden');
             
-            // Убеждаемся, что счётчики правильные
             leftToCollect = { romashka: 4, rosa: 2, tulpan: 5 };
             updateCounters();
         }
@@ -782,7 +767,6 @@
         function dragEnd(e) {
             if (!isDragging || !draggedFlower) return;
             
-            // Проверяем попадание в корзину
             const korzina = document.getElementById('korzina').getBoundingClientRect();
             const flowerRect = draggedFlower.getBoundingClientRect();
             const flowerCenterX = flowerRect.left + flowerRect.width / 2;
@@ -801,7 +785,6 @@
                 const flowerName = draggedFlower.dataset.name;
                 
                 if (leftToCollect[flowerName] > 0) {
-                    // Правильный сбор
                     leftToCollect[flowerName]--;
                     updateCounters();
                     
@@ -818,16 +801,13 @@
                         }, 500);
                     }
                 } else {
-                    // Лишний цветок - звук 10 и возврат
                     playSound('Zvuk10');
                     returnFlowerToStart(draggedFlower);
                 }
             } else {
-                // Не попал в корзину - возвращаем
                 returnFlowerToStart(draggedFlower);
             }
             
-            // Очищаем
             draggedFlower.classList.remove('dragging');
             draggedFlower.style.zIndex = '10';
             draggedFlower = null;
@@ -881,10 +861,6 @@
             window.open('fail.pdf', '_blank');
         }
 
-        function resetGame() {
-            fullReset();
-        }
-
         // Глобальные функции
         window.startGame = startGame;
         window.nextHint = nextHint;
@@ -892,7 +868,6 @@
         window.startDrag = startDrag;
         window.showGiftScreen = showGiftScreen;
         window.downloadPDF = downloadPDF;
-        window.resetGame = resetGame;
 
     </script>
 </body>
