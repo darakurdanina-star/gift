@@ -40,7 +40,6 @@
             margin: auto;
         }
 
-        /* ФОН - jpg */
         .background-layer {
             position: absolute;
             top: 0;
@@ -198,9 +197,13 @@
             display: none;
         }
 
-        #flower-romashka { left: 15%; top: 50%; }
-        #flower-rosa { left: 45%; top: 50%; }
-        #flower-tulpan { left: 75%; top: 50%; }
+        /* ПОЗИЦИИ ДЛЯ ВСЕХ 6 ЦВЕТОВ */
+        #flower-romashka { left: 10%; top: 40%; }
+        #flower-rosa { left: 30%; top: 50%; }
+        #flower-tulpan { left: 50%; top: 45%; }
+        #flower-gvozdika { left: 70%; top: 55%; }
+        #flower-pion { left: 20%; top: 65%; }
+        #flower-vasilek { left: 80%; top: 35%; }
 
         #bouquet-screen {
             position: absolute;
@@ -267,6 +270,14 @@
             justify-content: center;
             align-items: center;
             backdrop-filter: blur(5px);
+        }
+
+        .gift-img {
+            width: 60%;
+            max-width: 250px;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            border: 5px solid white;
         }
 
         .gift-text {
@@ -336,23 +347,23 @@
 <body>
 
     <div id="game-container">
-        <!-- ФОН - jpg -->
+        <!-- ФОН -->
         <div class="background-layer"></div>
 
         <!-- КНОПКА СТАРТ -->
         <button class="start-button" id="start-btn" onclick="startGame()">🌷 СДЕЛАТЬ ПОДАРОК МАМЕ 🌷</button>
 
-        <!-- КОНВЕРТ - png (предположительно) -->
+        <!-- КОНВЕРТ -->
         <div class="konvert-container hidden" id="konvert" onclick="nextHint()">
             <img src="konvert.png" alt="Конверт">
         </div>
 
-        <!-- КОРЗИНА - png -->
+        <!-- КОРЗИНА -->
         <div class="korzina-container hidden" id="korzina">
             <img src="korzina.png" alt="Корзина">
         </div>
 
-        <!-- СЧЁТЧИКИ - все png -->
+        <!-- СЧЁТЧИКИ -->
         <div class="counters hidden" id="counters">
             <div class="counter-item" id="counter-romashka">
                 <img src="romashka.png" alt="Ромашка"> <span id="romashka-left">1</span>
@@ -365,12 +376,15 @@
             </div>
         </div>
 
-        <!-- ЦВЕТЫ - все png -->
-        <img src="romashka.png" class="flower hidden" id="flower-romashka" data-name="romashka" data-stage="2" onclick="collectFlower(this)">
-        <img src="rosa.png" class="flower hidden" id="flower-rosa" data-name="rosa" data-stage="2" onclick="collectFlower(this)">
-        <img src="tulpan.png" class="flower hidden" id="flower-tulpan" data-name="tulpan" data-stage="2" onclick="collectFlower(this)">
+        <!-- ВСЕ 6 ЦВЕТОВ (сразу видны) -->
+        <img src="romashka.png" class="flower" id="flower-romashka" data-name="romashka" onclick="checkFlower('romashka', this)">
+        <img src="rosa.png" class="flower" id="flower-rosa" data-name="rosa" onclick="checkFlower('rosa', this)">
+        <img src="tulpan.png" class="flower" id="flower-tulpan" data-name="tulpan" onclick="checkFlower('tulpan', this)">
+        <img src="gvozdika.png" class="flower" id="flower-gvozdika" data-name="gvozdika" onclick="checkFlower('gvozdika', this)">
+        <img src="pion.png" class="flower" id="flower-pion" data-name="pion" onclick="checkFlower('pion', this)">
+        <img src="vasilek.png" class="flower" id="flower-vasilek" data-name="vasilek" onclick="checkFlower('vasilek', this)">
 
-        <!-- ЭКРАН БУКЕТА - png -->
+        <!-- ЭКРАН БУКЕТА -->
         <div id="bouquet-screen">
             <img src="buket.png" alt="Букет" class="bouquet-img">
             <div class="bouquet-text">Покажи открытку маме!</div>
@@ -379,6 +393,7 @@
 
         <!-- ЭКРАН ПОДАРКА -->
         <div id="gift-screen">
+            <img src="gift.png" alt="Подарок" class="gift-img">
             <div class="gift-text">🌷 Нарисуй свои цветы для мамы! 🌷</div>
             <button class="pdf-button" onclick="downloadPDF()">🖨️ СКАЧАТЬ ДЕТАЛИ</button>
             <button class="again-button" onclick="resetGame()">🌟 ИГРАТЬ ЕЩЁ 🌟</button>
@@ -387,17 +402,18 @@
 
     <script>
         // ========== ПЕРЕМЕННЫЕ ==========
-        let gameStage = 0;
-        let hintIndex = 0;
+        let gameStage = 0; // 0 - старт, 1 - угадай, 2 - сбор
+        let hintIndex = 0; // 0 - ромашка, 1 - роза, 2 - тюльпан
         const correctFlowers = ['romashka', 'rosa', 'tulpan'];
         
+        // Счётчики для сбора
         let leftToCollect = {
             romashka: 1,
             rosa: 1,
             tulpan: 1
         };
 
-        // Звуки с БОЛЬШОЙ буквы (как у вас)
+        // Звуки
         const sounds = {
             Zvuk1: new Audio('Zvuk1.mp3'),
             Zvuk2: new Audio('Zvuk2.mp3'),
@@ -437,11 +453,10 @@
             hintIndex = 0;
             playSound('Zvuk1');
             
+            // Показываем конверт
             document.getElementById('konvert').classList.remove('hidden');
             
-            document.querySelectorAll('.flower[data-stage="2"]').forEach(flower => {
-                flower.classList.add('hidden');
-            });
+            // Все цветы уже видны (они не hidden)
         }
 
         // ========== ПОДСКАЗКИ ==========
@@ -450,12 +465,13 @@
             
             document.getElementById('konvert').classList.add('hidden');
             
+            // Подсказки по порядку
             if (hintIndex === 0) {
-                playSound('Zvuk2');
+                playSound('Zvuk2'); // Подсказка ромашка
             } else if (hintIndex === 1) {
-                playSound('Zvuk5');
+                playSound('Zvuk5'); // Подсказка роза
             } else if (hintIndex === 2) {
-                playSound('Zvuk7');
+                playSound('Zvuk7'); // Подсказка тюльпан
             }
             
             let hintText = '';
@@ -468,12 +484,13 @@
             alert(hintText);
         }
 
-        // ========== ПЕРВЫЙ ЭТАП ==========
+        // ========== ПРОВЕРКА ЦВЕТКА (первый этап) ==========
         function checkFlower(flowerName, element) {
             if (gameStage !== 1) return;
             if (element.classList.contains('found')) return;
             
             if (flowerName === correctFlowers[hintIndex]) {
+                // Правильный ответ
                 if (hintIndex === 0) {
                     playSound('Zvuk3');
                 } else if (hintIndex === 1) {
@@ -482,13 +499,16 @@
                     playSound('Zvuk8');
                 }
                 
+                // Помечаем цветок как найденный (он исчезает)
                 element.classList.add('found');
                 
+                // Анимация конверта
                 document.getElementById('konvert').classList.add('bounce');
                 setTimeout(() => {
                     document.getElementById('konvert').classList.remove('bounce');
                 }, 500);
                 
+                // Переходим к следующему цветку
                 setTimeout(() => {
                     hintIndex++;
                     
@@ -496,16 +516,21 @@
                         document.getElementById('konvert').classList.remove('hidden');
                     } else {
                         playSound('Zvuk9');
+                        // Все цветы угаданы - переходим ко второму этапу
                         startSecondStage();
                     }
                 }, 800);
             } else {
+                // Неправильный ответ
                 playSound('Zvuk4');
+                
+                // Трясём неправильный цветок
                 element.classList.add('shake');
                 setTimeout(() => {
                     element.classList.remove('shake');
                 }, 400);
                 
+                // Возвращаем конверт
                 setTimeout(() => {
                     document.getElementById('konvert').classList.remove('hidden');
                 }, 500);
@@ -516,20 +541,31 @@
         function startSecondStage() {
             gameStage = 2;
             
+            // Прячем конверт
             document.getElementById('konvert').classList.add('hidden');
             
-            document.querySelectorAll('.flower[data-stage="2"]').forEach(flower => {
-                flower.classList.remove('hidden');
+            // Прячем все цветы, кроме трёх нужных
+            document.querySelectorAll('.flower').forEach(flower => {
+                const name = flower.dataset.name;
+                if (name === 'romashka' || name === 'rosa' || name === 'tulpan') {
+                    // Эти цветы остаются, но их нужно "вернуть" если они были найдены
+                    flower.classList.remove('found');
+                } else {
+                    // Лишние цветы скрываем
+                    flower.classList.add('hidden');
+                }
             });
             
+            // Показываем корзину и счётчики
             document.getElementById('korzina').classList.remove('hidden');
             document.getElementById('counters').classList.remove('hidden');
             
+            // Обнуляем счётчики
             leftToCollect = { romashka: 1, rosa: 1, tulpan: 1 };
             updateCounters();
         }
 
-        // ========== СБОР ЦВЕТКА ==========
+        // ========== СБОР ЦВЕТКА (второй этап) ==========
         function collectFlower(flower) {
             if (gameStage !== 2) return;
             
@@ -539,13 +575,16 @@
                 leftToCollect[flowerName]--;
                 updateCounters();
                 
+                // Анимация корзины
                 document.getElementById('korzina').classList.add('bounce');
                 setTimeout(() => {
                     document.getElementById('korzina').classList.remove('bounce');
                 }, 500);
                 
+                // Цветок исчезает
                 flower.classList.add('found');
                 
+                // Проверяем, всё ли собрано
                 if (leftToCollect.romashka === 0 && leftToCollect.rosa === 0 && leftToCollect.tulpan === 0) {
                     playSound('Zvuk10');
                     setTimeout(() => {
@@ -553,7 +592,8 @@
                     }, 500);
                 }
             } else {
-                playSound('Zvuk10');
+                // Этот цветок уже собран
+                playSound('Zvuk4');
                 flower.classList.add('shake');
                 setTimeout(() => {
                     flower.classList.remove('shake');
@@ -604,8 +644,9 @@
             document.getElementById('korzina').classList.add('hidden');
             document.getElementById('counters').classList.add('hidden');
             
+            // Возвращаем все цветы
             document.querySelectorAll('.flower').forEach(flower => {
-                flower.classList.add('hidden');
+                flower.classList.remove('hidden');
                 flower.classList.remove('found');
             });
             
@@ -629,3 +670,4 @@
     </script>
 </body>
 </html>
+
