@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Машин букет для мамы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            touch-action: none;
+            background-color: #2c3e50;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 177.78vw;
+            max-width: 405px;
+            max-height: 720px;
+            background-color: #4CAF50;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            margin: auto;
+        }
+
+        /* ФОН - jpg */
+        .background-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('fon.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .start-button {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 40px;
+            font-size: 28px;
+            background: #FF69B4;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #C71585;
+            font-weight: bold;
+            z-index: 30;
+            border: 3px solid #FFD700;
+        }
+
+        .start-button:active {
+            transform: translateX(-50%) translateY(6px);
+            box-shadow: 0 2px 0 #C71585;
+        }
+
+        .start-button.hidden {
+            display: none;
+        }
+
+        .konvert-container {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25%;
+            max-width: 100px;
+            z-index: 15;
+            cursor: pointer;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+            transition: transform 0.2s;
+        }
+
+        .konvert-container:active {
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .konvert-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .konvert-container.hidden {
+            display: none;
+        }
+
+        .korzina-container {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20%;
+            max-width: 80px;
+            z-index: 15;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+        }
+
+        .korzina-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .korzina-container.hidden {
+            display: none;
+        }
+
+        .counters {
+            position: absolute;
+            top: 5%;
+            right: 3%;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(255,255,255,0.8);
+            padding: 10px;
+            border-radius: 20px;
+            border: 2px solid #FF69B4;
+        }
+
+        .counter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .counter-item.completed {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0);
+            display: none;
+        }
+
+        .counter-item img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .counters.hidden {
+            display: none;
+        }
+
+        .flower {
+            position: absolute;
+            width: 8%;
+            height: auto;
+            cursor: pointer;
+            touch-action: manipulation;
+            user-select: none;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .flower:active {
+            transform: scale(1.1);
+        }
+
+        .flower.found {
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .flower.dragging {
+            transition: none;
+            z-index: 30;
+        }
+
+        .flower.hidden {
+            display: none;
+        }
+
+        #flower-romashka { left: 15%; top: 50%; }
+        #flower-rosa { left: 45%; top: 50%; }
+        #flower-tulpan { left: 75%; top: 50%; }
+
+        #bouquet-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 200, 230, 0.95);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .bouquet-img {
+            width: 70%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            border: 5px solid white;
+            border-radius: 20px;
+            box-shadow: 0 10px 0 #C71585;
+        }
+
+        .bouquet-text {
+            font-size: 28px;
+            color: #C71585;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 2px 2px 0 white;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .next-button {
+            padding: 15px 40px;
+            font-size: 24px;
+            background: #FF69B4;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #C71585;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        .next-button:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #C71585;
+        }
+
+        #gift-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 220, 240, 0.95);
+            z-index: 110;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .gift-text {
+            font-size: 26px;
+            color: #C71585;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+            line-height: 1.4;
+        }
+
+        .pdf-button {
+            padding: 18px 40px;
+            font-size: 24px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #2E7D32;
+            font-weight: bold;
+            margin-top: 20px;
+            border: 3px solid white;
+        }
+
+        .pdf-button:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #2E7D32;
+        }
+
+        .again-button {
+            padding: 12px 30px;
+            font-size: 20px;
+            background: #FF69B4;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #C71585;
+            margin-top: 20px;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .bounce {
+            animation: bounce 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- ФОН - jpg -->
+        <div class="background-layer"></div>
+
+        <!-- КНОПКА СТАРТ -->
+        <button class="start-button" id="start-btn" onclick="startGame()">🌷 СДЕЛАТЬ ПОДАРОК МАМЕ 🌷</button>
+
+        <!-- КОНВЕРТ - png (предположительно) -->
+        <div class="konvert-container hidden" id="konvert" onclick="nextHint()">
+            <img src="konvert.png" alt="Конверт">
+        </div>
+
+        <!-- КОРЗИНА - png -->
+        <div class="korzina-container hidden" id="korzina">
+            <img src="korzina.png" alt="Корзина">
+        </div>
+
+        <!-- СЧЁТЧИКИ - все png -->
+        <div class="counters hidden" id="counters">
+            <div class="counter-item" id="counter-romashka">
+                <img src="romashka.png" alt="Ромашка"> <span id="romashka-left">1</span>
+            </div>
+            <div class="counter-item" id="counter-rosa">
+                <img src="rosa.png" alt="Роза"> <span id="rosa-left">1</span>
+            </div>
+            <div class="counter-item" id="counter-tulpan">
+                <img src="tulpan.png" alt="Тюльпан"> <span id="tulpan-left">1</span>
+            </div>
+        </div>
+
+        <!-- ЦВЕТЫ - все png -->
+        <img src="romashka.png" class="flower hidden" id="flower-romashka" data-name="romashka" data-stage="2" onclick="collectFlower(this)">
+        <img src="rosa.png" class="flower hidden" id="flower-rosa" data-name="rosa" data-stage="2" onclick="collectFlower(this)">
+        <img src="tulpan.png" class="flower hidden" id="flower-tulpan" data-name="tulpan" data-stage="2" onclick="collectFlower(this)">
+
+        <!-- ЭКРАН БУКЕТА - png -->
+        <div id="bouquet-screen">
+            <img src="buket.png" alt="Букет" class="bouquet-img">
+            <div class="bouquet-text">Покажи открытку маме!</div>
+            <button class="next-button" onclick="showGiftScreen()">ДАЛЬШЕ</button>
+        </div>
+
+        <!-- ЭКРАН ПОДАРКА -->
+        <div id="gift-screen">
+            <div class="gift-text">🌷 Нарисуй свои цветы для мамы! 🌷</div>
+            <button class="pdf-button" onclick="downloadPDF()">🖨️ СКАЧАТЬ ДЕТАЛИ</button>
+            <button class="again-button" onclick="resetGame()">🌟 ИГРАТЬ ЕЩЁ 🌟</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== ПЕРЕМЕННЫЕ ==========
+        let gameStage = 0;
+        let hintIndex = 0;
+        const correctFlowers = ['romashka', 'rosa', 'tulpan'];
+        
+        let leftToCollect = {
+            romashka: 1,
+            rosa: 1,
+            tulpan: 1
+        };
+
+        // Звуки с БОЛЬШОЙ буквы (как у вас)
+        const sounds = {
+            Zvuk1: new Audio('Zvuk1.mp3'),
+            Zvuk2: new Audio('Zvuk2.mp3'),
+            Zvuk3: new Audio('Zvuk3.mp3'),
+            Zvuk4: new Audio('Zvuk4.mp3'),
+            Zvuk5: new Audio('Zvuk5.mp3'),
+            Zvuk6: new Audio('Zvuk6.mp3'),
+            Zvuk7: new Audio('Zvuk7.mp3'),
+            Zvuk8: new Audio('Zvuk8.mp3'),
+            Zvuk9: new Audio('Zvuk9.mp3'),
+            Zvuk10: new Audio('Zvuk10.mp3'),
+            Zvuk11: new Audio('Zvuk11.mp3'),
+            Zvuk12: new Audio('Zvuk12.mp3')
+        };
+
+        // Предзагрузка звуков
+        for (let key in sounds) {
+            sounds[key].load();
+        }
+
+        function playSound(soundName) {
+            try {
+                if (sounds[soundName]) {
+                    sounds[soundName].pause();
+                    sounds[soundName].currentTime = 0;
+                    sounds[soundName].play().catch(e => console.log('Аудио не воспроизвелось:', e));
+                }
+            } catch (e) {
+                console.log('Ошибка воспроизведения звука:', e);
+            }
+        }
+
+        // ========== СТАРТ ==========
+        function startGame() {
+            document.getElementById('start-btn').classList.add('hidden');
+            gameStage = 1;
+            hintIndex = 0;
+            playSound('Zvuk1');
+            
+            document.getElementById('konvert').classList.remove('hidden');
+            
+            document.querySelectorAll('.flower[data-stage="2"]').forEach(flower => {
+                flower.classList.add('hidden');
+            });
+        }
+
+        // ========== ПОДСКАЗКИ ==========
+        function nextHint() {
+            if (gameStage !== 1) return;
+            
+            document.getElementById('konvert').classList.add('hidden');
+            
+            if (hintIndex === 0) {
+                playSound('Zvuk2');
+            } else if (hintIndex === 1) {
+                playSound('Zvuk5');
+            } else if (hintIndex === 2) {
+                playSound('Zvuk7');
+            }
+            
+            let hintText = '';
+            switch(hintIndex) {
+                case 0: hintText = '🌼 Найди цветок с белыми лепестками и жёлтой серединкой'; break;
+                case 1: hintText = '🌹 Найди цветок с шипами на стебле'; break;
+                case 2: hintText = '🌷 Найди цветок с розовыми лепестками-капельками'; break;
+            }
+            
+            alert(hintText);
+        }
+
+        // ========== ПЕРВЫЙ ЭТАП ==========
+        function checkFlower(flowerName, element) {
+            if (gameStage !== 1) return;
+            if (element.classList.contains('found')) return;
+            
+            if (flowerName === correctFlowers[hintIndex]) {
+                if (hintIndex === 0) {
+                    playSound('Zvuk3');
+                } else if (hintIndex === 1) {
+                    playSound('Zvuk6');
+                } else if (hintIndex === 2) {
+                    playSound('Zvuk8');
+                }
+                
+                element.classList.add('found');
+                
+                document.getElementById('konvert').classList.add('bounce');
+                setTimeout(() => {
+                    document.getElementById('konvert').classList.remove('bounce');
+                }, 500);
+                
+                setTimeout(() => {
+                    hintIndex++;
+                    
+                    if (hintIndex < 3) {
+                        document.getElementById('konvert').classList.remove('hidden');
+                    } else {
+                        playSound('Zvuk9');
+                        startSecondStage();
+                    }
+                }, 800);
+            } else {
+                playSound('Zvuk4');
+                element.classList.add('shake');
+                setTimeout(() => {
+                    element.classList.remove('shake');
+                }, 400);
+                
+                setTimeout(() => {
+                    document.getElementById('konvert').classList.remove('hidden');
+                }, 500);
+            }
+        }
+
+        // ========== ВТОРОЙ ЭТАП ==========
+        function startSecondStage() {
+            gameStage = 2;
+            
+            document.getElementById('konvert').classList.add('hidden');
+            
+            document.querySelectorAll('.flower[data-stage="2"]').forEach(flower => {
+                flower.classList.remove('hidden');
+            });
+            
+            document.getElementById('korzina').classList.remove('hidden');
+            document.getElementById('counters').classList.remove('hidden');
+            
+            leftToCollect = { romashka: 1, rosa: 1, tulpan: 1 };
+            updateCounters();
+        }
+
+        // ========== СБОР ЦВЕТКА ==========
+        function collectFlower(flower) {
+            if (gameStage !== 2) return;
+            
+            const flowerName = flower.dataset.name;
+            
+            if (leftToCollect[flowerName] > 0) {
+                leftToCollect[flowerName]--;
+                updateCounters();
+                
+                document.getElementById('korzina').classList.add('bounce');
+                setTimeout(() => {
+                    document.getElementById('korzina').classList.remove('bounce');
+                }, 500);
+                
+                flower.classList.add('found');
+                
+                if (leftToCollect.romashka === 0 && leftToCollect.rosa === 0 && leftToCollect.tulpan === 0) {
+                    playSound('Zvuk10');
+                    setTimeout(() => {
+                        showBouquetScreen();
+                    }, 500);
+                }
+            } else {
+                playSound('Zvuk10');
+                flower.classList.add('shake');
+                setTimeout(() => {
+                    flower.classList.remove('shake');
+                }, 400);
+            }
+        }
+
+        function updateCounters() {
+            document.getElementById('romashka-left').textContent = leftToCollect.romashka;
+            document.getElementById('rosa-left').textContent = leftToCollect.rosa;
+            document.getElementById('tulpan-left').textContent = leftToCollect.tulpan;
+            
+            if (leftToCollect.romashka === 0) {
+                document.getElementById('counter-romashka').classList.add('completed');
+            }
+            if (leftToCollect.rosa === 0) {
+                document.getElementById('counter-rosa').classList.add('completed');
+            }
+            if (leftToCollect.tulpan === 0) {
+                document.getElementById('counter-tulpan').classList.add('completed');
+            }
+        }
+
+        function showBouquetScreen() {
+            gameStage = 3;
+            document.getElementById('bouquet-screen').style.display = 'flex';
+        }
+
+        function showGiftScreen() {
+            document.getElementById('bouquet-screen').style.display = 'none';
+            document.getElementById('gift-screen').style.display = 'flex';
+            playSound('Zvuk11');
+            playSound('Zvuk12');
+        }
+
+        function downloadPDF() {
+            window.open('fail.pdf', '_blank');
+        }
+
+        function resetGame() {
+            document.getElementById('bouquet-screen').style.display = 'none';
+            document.getElementById('gift-screen').style.display = 'none';
+            gameStage = 0;
+            hintIndex = 0;
+            
+            document.getElementById('start-btn').classList.remove('hidden');
+            document.getElementById('konvert').classList.add('hidden');
+            document.getElementById('korzina').classList.add('hidden');
+            document.getElementById('counters').classList.add('hidden');
+            
+            document.querySelectorAll('.flower').forEach(flower => {
+                flower.classList.add('hidden');
+                flower.classList.remove('found');
+            });
+            
+            document.getElementById('counter-romashka').classList.remove('completed');
+            document.getElementById('counter-rosa').classList.remove('completed');
+            document.getElementById('counter-tulpan').classList.remove('completed');
+            
+            leftToCollect = { romashka: 1, rosa: 1, tulpan: 1 };
+            updateCounters();
+        }
+
+        // Глобальные функции
+        window.startGame = startGame;
+        window.nextHint = nextHint;
+        window.checkFlower = checkFlower;
+        window.collectFlower = collectFlower;
+        window.showGiftScreen = showGiftScreen;
+        window.downloadPDF = downloadPDF;
+        window.resetGame = resetGame;
+
+    </script>
+</body>
+</html>
