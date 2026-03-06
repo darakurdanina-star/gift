@@ -192,7 +192,7 @@
             display: none;
         }
 
-        /* ПОЗИЦИИ ДЛЯ 6 ЦВЕТОВ (первый этап) - КРУПНЫЕ */
+        /* ПОЗИЦИИ ДЛЯ 6 ЦВЕТОВ (первый этап) */
         #flower-romashka { left: 10%; top: 30%; }
         #flower-rosa { left: 30%; top: 40%; }
         #flower-tulpan { left: 50%; top: 35%; }
@@ -394,7 +394,7 @@
             <img src="korzina.png" alt="Корзина">
         </div>
 
-        <!-- СЧЁТЧИКИ (для второго этапа) -->
+        <!-- СЧЁТЧИКИ (для второго этапа - по 8) -->
         <div class="counters hidden" id="counters">
             <div class="counter-item" id="counter-romashka">
                 <img src="romashka.png" alt="Ромашка"> <span id="romashka-left">8</span>
@@ -407,7 +407,7 @@
             </div>
         </div>
 
-        <!-- 6 ЦВЕТОВ ДЛЯ ПЕРВОГО ЭТАПА (по 1 каждого) -->
+        <!-- 6 ЦВЕТОВ ДЛЯ ПЕРВОГО ЭТАПА (ПО 1 КАЖДОГО) -->
         <img src="romashka.png" class="flower" id="flower-romashka" data-name="romashka" onclick="checkFlower('romashka', this)">
         <img src="rosa.png" class="flower" id="flower-rosa" data-name="rosa" onclick="checkFlower('rosa', this)">
         <img src="tulpan.png" class="flower" id="flower-tulpan" data-name="tulpan" onclick="checkFlower('tulpan', this)">
@@ -440,7 +440,7 @@
         let hintIndex = 0; // 0 - ромашка, 1 - роза, 2 - тюльпан
         const correctFlowers = ['romashka', 'rosa', 'tulpan'];
         
-        // Счётчики для сбора (по 8 каждого)
+        // Счётчики для сбора (по 8 каждого - ТОЛЬКО ДЛЯ ВТОРОГО ЭТАПА)
         let leftToCollect = {
             romashka: 8,
             rosa: 8,
@@ -500,43 +500,17 @@
                     img.dataset.name = type.name;
                     img.onclick = function() { collectGridFlower(this); };
                     
-                    // Распределяем по сетке 6×4
+                    // Позиции для 24 цветов (сетка 6×4)
                     const row = Math.floor(index / 6);
                     const col = index % 6;
                     
-                    // Позиции: 6 колонок, 4 ряда
-                    const positions = [
-                        { left: 5, top: 25 },  // ряд 1, колонка 1
-                        { left: 21, top: 25 }, // ряд 1, колонка 2
-                        { left: 37, top: 25 }, // ряд 1, колонка 3
-                        { left: 53, top: 25 }, // ряд 1, колонка 4
-                        { left: 69, top: 25 }, // ряд 1, колонка 5
-                        { left: 85, top: 25 }, // ряд 1, колонка 6
-                        
-                        { left: 5, top: 40 },   // ряд 2, колонка 1
-                        { left: 21, top: 40 },  // ряд 2, колонка 2
-                        { left: 37, top: 40 },  // ряд 2, колонка 3
-                        { left: 53, top: 40 },  // ряд 2, колонка 4
-                        { left: 69, top: 40 },  // ряд 2, колонка 5
-                        { left: 85, top: 40 },  // ряд 2, колонка 6
-                        
-                        { left: 5, top: 55 },   // ряд 3, колонка 1
-                        { left: 21, top: 55 },  // ряд 3, колонка 2
-                        { left: 37, top: 55 },  // ряд 3, колонка 3
-                        { left: 53, top: 55 },  // ряд 3, колонка 4
-                        { left: 69, top: 55 },  // ряд 3, колонка 5
-                        { left: 85, top: 55 },  // ряд 3, колонка 6
-                        
-                        { left: 5, top: 70 },   // ряд 4, колонка 1
-                        { left: 21, top: 70 },  // ряд 4, колонка 2
-                        { left: 37, top: 70 },  // ряд 4, колонка 3
-                        { left: 53, top: 70 },  // ряд 4, колонка 4
-                        { left: 69, top: 70 },  // ряд 4, колонка 5
-                        { left: 85, top: 70 }   // ряд 4, колонка 6
-                    ];
+                    // 6 колонок: 5%, 21%, 37%, 53%, 69%, 85%
+                    // 4 ряда: 25%, 40%, 55%, 70%
+                    const leftPositions = [5, 21, 37, 53, 69, 85];
+                    const topPositions = [25, 40, 55, 70];
                     
-                    img.style.left = positions[index].left + '%';
-                    img.style.top = positions[index].top + '%';
+                    img.style.left = leftPositions[col] + '%';
+                    img.style.top = topPositions[row] + '%';
                     
                     container.appendChild(img);
                     index++;
@@ -553,11 +527,13 @@
             
             document.getElementById('konvert').classList.remove('hidden');
             
-            // Показываем первые 6 цветов, скрываем сетку
+            // Показываем первые 6 цветов (по 1 каждого)
             document.querySelectorAll('.flower').forEach(f => f.classList.remove('hidden'));
+            
+            // Скрываем сетку с 24 цветами
             document.getElementById('grid-flowers').classList.add('hidden');
             
-            // Создаём цветы для второго этапа (24 штуки)
+            // Создаём цветы для второго этапа (24 штуки), но они пока скрыты
             createGridFlowers();
         }
 
@@ -635,13 +611,16 @@
             
             document.getElementById('konvert').classList.add('hidden');
             
-            // Прячем первые 6 цветов, показываем сетку с 24 цветами
+            // Прячем первые 6 цветов
             document.querySelectorAll('.flower').forEach(f => f.classList.add('hidden'));
+            
+            // Показываем сетку с 24 цветами
             document.getElementById('grid-flowers').classList.remove('hidden');
             
             document.getElementById('korzina').classList.remove('hidden');
             document.getElementById('counters').classList.remove('hidden');
             
+            // Сброс счётчиков (по 8 каждого)
             leftToCollect = { romashka: 8, rosa: 8, tulpan: 8 };
             updateCounters();
         }
