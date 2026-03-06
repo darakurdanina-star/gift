@@ -514,7 +514,7 @@
             Zvuk10: new Audio('Zvuk10.mp3'),
             Zvuk11: new Audio('Zvuk11.mp3'),
             Zvuk12: new Audio('Zvuk12.mp3'),
-            Zvuk13: new Audio('Zvuk13.mp3')  // Новый звук вместо Zvuk1
+            Zvuk13: new Audio('Zvuk13.mp3')
         };
 
         // Предзагрузка звуков
@@ -532,7 +532,7 @@
 
         function playSound(soundName, callback) {
             try {
-                stopAllSounds(); // Останавливаем все предыдущие звуки
+                stopAllSounds();
                 
                 if (sounds[soundName]) {
                     if (callback) {
@@ -563,29 +563,66 @@
             });
         }
 
-        // ========== СТАРТ ==========
-        function startGame() {
-            document.getElementById('start-btn').classList.add('hidden');
-            gameStage = 1;
+        // ========== ПОЛНЫЙ СБРОС ИГРЫ ==========
+        function fullReset() {
+            // Скрываем все экраны
+            document.getElementById('bouquet-screen').style.display = 'none';
+            document.getElementById('gift-screen').style.display = 'none';
+            
+            // Сбрасываем состояние игры
+            gameStage = 0;
             hintIndex = 0;
             canTransition = false;
-            playSound('Zvuk13');  // Новый звук
             
-            document.getElementById('konvert').classList.remove('hidden');
+            // Показываем кнопку старта
+            document.getElementById('start-btn').classList.remove('hidden');
             
-            // Полностью сбрасываем все цветы
+            // Прячем все игровые элементы
+            document.getElementById('konvert').classList.add('hidden');
+            document.getElementById('korzina').classList.add('hidden');
+            document.getElementById('counters').classList.add('hidden');
+            
+            // Полностью сбрасываем первые цветы (убираем found и hidden)
             document.querySelectorAll('.flower').forEach(f => {
                 f.classList.remove('hidden', 'found');
             });
             
+            // Полностью сбрасываем вторые цветы
             document.querySelectorAll('.grid-flower').forEach(f => {
                 f.classList.add('hidden');
-                f.classList.remove('found');
+                f.classList.remove('found', 'dragging');
+                // Возвращаем на исходные позиции
+                const posClass = f.dataset.posClass;
+                if (posClass) {
+                    f.className = 'grid-flower hidden';
+                    f.classList.add(posClass);
+                }
             });
             
             // Сбрасываем счётчики
+            document.getElementById('counter-romashka').classList.remove('completed');
+            document.getElementById('counter-rosa').classList.remove('completed');
+            document.getElementById('counter-tulpan').classList.remove('completed');
+            
             leftToCollect = { romashka: 4, rosa: 2, tulpan: 5 };
             updateCounters();
+        }
+
+        // ========== СТАРТ ==========
+        function startGame() {
+            fullReset(); // Сначала полный сброс
+            document.getElementById('start-btn').classList.add('hidden');
+            gameStage = 1;
+            hintIndex = 0;
+            canTransition = false;
+            playSound('Zvuk13');
+            
+            document.getElementById('konvert').classList.remove('hidden');
+            
+            // Показываем первые цветы
+            document.querySelectorAll('.flower').forEach(f => {
+                f.classList.remove('hidden', 'found');
+            });
             
             positionGridFlowers();
         }
@@ -596,7 +633,7 @@
             
             document.getElementById('konvert').classList.add('hidden');
             
-            // Останавливаем все звуки и играем подсказку
+            // Только звук, без текста!
             if (hintIndex === 0) {
                 playSound('Zvuk2');
             } else if (hintIndex === 1) {
@@ -605,14 +642,7 @@
                 playSound('Zvuk7');
             }
             
-            let hintText = '';
-            switch(hintIndex) {
-                case 0: hintText = '🌼 Найди цветок с белыми лепестками и жёлтой серединкой'; break;
-                case 1: hintText = '🌹 Найди цветок с шипами на стебле'; break;
-                case 2: hintText = '🌷 Найди цветок с розовыми лепестками-капельками'; break;
-            }
-            
-            alert(hintText);
+            // Убрали alert с текстом!
         }
 
         // ========== ПРОВЕРКА ЦВЕТКА (первый этап) ==========
@@ -675,7 +705,7 @@
             document.getElementById('konvert').classList.add('hidden');
             document.querySelectorAll('.flower').forEach(f => f.classList.add('hidden'));
             
-            // Показываем все цветы второго этапа
+            // Показываем все цветы второго этапа (сброшенные)
             document.querySelectorAll('.grid-flower').forEach(f => {
                 f.classList.remove('hidden');
                 f.classList.remove('found');
@@ -846,41 +876,7 @@
         }
 
         function resetGame() {
-            // Полностью сбрасываем всё
-            document.getElementById('bouquet-screen').style.display = 'none';
-            document.getElementById('gift-screen').style.display = 'none';
-            gameStage = 0;
-            hintIndex = 0;
-            canTransition = false;
-            
-            document.getElementById('start-btn').classList.remove('hidden');
-            document.getElementById('konvert').classList.add('hidden');
-            document.getElementById('korzina').classList.add('hidden');
-            document.getElementById('counters').classList.add('hidden');
-            
-            // Сбрасываем все цветы
-            document.querySelectorAll('.flower').forEach(f => {
-                f.classList.remove('hidden', 'found');
-            });
-            
-            document.querySelectorAll('.grid-flower').forEach(f => {
-                f.classList.add('hidden');
-                f.classList.remove('found');
-                // Возвращаем на исходные позиции
-                const posClass = f.dataset.posClass;
-                if (posClass) {
-                    f.className = 'grid-flower hidden';
-                    f.classList.add(posClass);
-                }
-            });
-            
-            // Сбрасываем счётчики
-            document.getElementById('counter-romashka').classList.remove('completed');
-            document.getElementById('counter-rosa').classList.remove('completed');
-            document.getElementById('counter-tulpan').classList.remove('completed');
-            
-            leftToCollect = { romashka: 4, rosa: 2, tulpan: 5 };
-            updateCounters();
+            fullReset();
         }
 
         // Глобальные функции
