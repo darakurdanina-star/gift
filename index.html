@@ -115,6 +115,7 @@
             max-width: 80px;
             z-index: 15;
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+            cursor: pointer;
         }
 
         .korzina-container img {
@@ -166,7 +167,6 @@
             display: none;
         }
 
-        /* ЦВЕТЫ ДЛЯ ПЕРВОГО ЭТАПА - по 1 каждого */
         .flower {
             position: absolute;
             width: 10%;
@@ -193,7 +193,6 @@
             display: none;
         }
 
-        /* ЦВЕТЫ ДЛЯ ВТОРОГО ЭТАПА - по 8 каждого */
         .grid-flower {
             position: absolute;
             width: 8%;
@@ -217,10 +216,14 @@
         }
 
         .grid-flower.hidden {
-            display: none !important; /* Важно - скрываем до второго этапа */
+            display: none !important;
         }
 
-        /* ПОЗИЦИИ ДЛЯ 6 ЦВЕТОВ ПЕРВОГО ЭТАПА */
+        .grid-flower.dragging {
+            transition: none;
+            z-index: 30;
+        }
+
         #flower-romashka { left: 10%; top: 30%; }
         #flower-rosa { left: 30%; top: 40%; }
         #flower-tulpan { left: 50%; top: 35%; }
@@ -228,7 +231,6 @@
         #flower-pion { left: 20%; top: 60%; }
         #flower-vasilek { left: 80%; top: 25%; }
 
-        /* ПОЗИЦИИ ДЛЯ 24 ЦВЕТОВ ВТОРОГО ЭТАПА */
         .pos-1 { left: 5%; top: 25%; }
         .pos-2 { left: 21%; top: 25%; }
         .pos-3 { left: 37%; top: 25%; }
@@ -396,36 +398,31 @@
 <body>
 
     <div id="game-container">
-        <!-- ФОН -->
         <div class="background-layer"></div>
 
-        <!-- КНОПКА СТАРТ -->
         <button class="start-button" id="start-btn" onclick="startGame()">🌷 СДЕЛАТЬ ПОДАРОК МАМЕ 🌷</button>
 
-        <!-- КОНВЕРТ -->
         <div class="konvert-container hidden" id="konvert" onclick="nextHint()">
             <img src="konvert.png" alt="Конверт">
         </div>
 
-        <!-- КОРЗИНА -->
         <div class="korzina-container hidden" id="korzina">
             <img src="korzina.png" alt="Корзина">
         </div>
 
-        <!-- СЧЁТЧИКИ -->
         <div class="counters hidden" id="counters">
             <div class="counter-item" id="counter-romashka">
-                <img src="romashka.png" alt="Ромашка"> <span id="romashka-left">8</span>
+                <img src="romashka.png" alt="Ромашка"> <span id="romashka-left">4</span>
             </div>
             <div class="counter-item" id="counter-rosa">
-                <img src="rosa.png" alt="Роза"> <span id="rosa-left">8</span>
+                <img src="rosa.png" alt="Роза"> <span id="rosa-left">2</span>
             </div>
             <div class="counter-item" id="counter-tulpan">
-                <img src="tulpan.png" alt="Тюльпан"> <span id="tulpan-left">8</span>
+                <img src="tulpan.png" alt="Тюльпан"> <span id="tulpan-left">5</span>
             </div>
         </div>
 
-        <!-- ======== ПЕРВЫЙ ЭТАП: 6 ЦВЕТОВ (по 1 каждого) ======== -->
+        <!-- Первый этап: 6 цветов -->
         <img src="romashka.png" class="flower" id="flower-romashka" data-name="romashka" onclick="checkFlower('romashka', this)">
         <img src="rosa.png" class="flower" id="flower-rosa" data-name="rosa" onclick="checkFlower('rosa', this)">
         <img src="tulpan.png" class="flower" id="flower-tulpan" data-name="tulpan" onclick="checkFlower('tulpan', this)">
@@ -433,47 +430,43 @@
         <img src="pion.png" class="flower" id="flower-pion" data-name="pion" onclick="checkFlower('pion', this)">
         <img src="vasilek.png" class="flower" id="flower-vasilek" data-name="vasilek" onclick="checkFlower('vasilek', this)">
 
-        <!-- ======== ВТОРОЙ ЭТАП: 24 ЦВЕТА (8 каждого вида) ======== -->
-        <!-- ВСЕ ОНИ СКРЫТЫ КЛАССОМ hidden ДО ВТОРОГО ЭТАПА -->
-        
+        <!-- Второй этап: 24 цветка (8 каждого вида) -->
         <!-- 8 ромашек -->
-        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-1" data-name="romashka" onclick="collectGridFlower(this)">
-        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-2" data-name="romashka" onclick="collectGridFlower(this)">
-        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-3" data-name="romashka" onclick="collectGridFlower(this)">
-        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-4" data-name="romashka" onclick="collectGridFlower(this)">
-        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-5" data-name="romashka" onclick="collectGridFlower(this)">
-        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-6" data-name="romashka" onclick="collectGridFlower(this)">
-        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-7" data-name="romashka" onclick="collectGridFlower(this)">
-        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-8" data-name="romashka" onclick="collectGridFlower(this)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-1" data-name="romashka" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-2" data-name="romashka" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-3" data-name="romashka" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-4" data-name="romashka" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-5" data-name="romashka" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-6" data-name="romashka" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-7" data-name="romashka" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="romashka.png" class="grid-flower hidden" id="grid-romashka-8" data-name="romashka" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
 
         <!-- 8 роз -->
-        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-1" data-name="rosa" onclick="collectGridFlower(this)">
-        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-2" data-name="rosa" onclick="collectGridFlower(this)">
-        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-3" data-name="rosa" onclick="collectGridFlower(this)">
-        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-4" data-name="rosa" onclick="collectGridFlower(this)">
-        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-5" data-name="rosa" onclick="collectGridFlower(this)">
-        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-6" data-name="rosa" onclick="collectGridFlower(this)">
-        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-7" data-name="rosa" onclick="collectGridFlower(this)">
-        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-8" data-name="rosa" onclick="collectGridFlower(this)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-1" data-name="rosa" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-2" data-name="rosa" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-3" data-name="rosa" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-4" data-name="rosa" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-5" data-name="rosa" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-6" data-name="rosa" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-7" data-name="rosa" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="rosa.png" class="grid-flower hidden" id="grid-rosa-8" data-name="rosa" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
 
         <!-- 8 тюльпанов -->
-        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-1" data-name="tulpan" onclick="collectGridFlower(this)">
-        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-2" data-name="tulpan" onclick="collectGridFlower(this)">
-        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-3" data-name="tulpan" onclick="collectGridFlower(this)">
-        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-4" data-name="tulpan" onclick="collectGridFlower(this)">
-        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-5" data-name="tulpan" onclick="collectGridFlower(this)">
-        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-6" data-name="tulpan" onclick="collectGridFlower(this)">
-        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-7" data-name="tulpan" onclick="collectGridFlower(this)">
-        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-8" data-name="tulpan" onclick="collectGridFlower(this)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-1" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-2" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-3" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-4" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-5" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-6" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-7" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+        <img src="tulpan.png" class="grid-flower hidden" id="grid-tulpan-8" data-name="tulpan" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
 
-        <!-- ЭКРАН БУКЕТА -->
         <div id="bouquet-screen">
             <img src="buket.png" alt="Букет" class="bouquet-img">
             <div class="bouquet-text">Покажи открытку маме!</div>
             <button class="next-button" onclick="showGiftScreen()">ДАЛЬШЕ</button>
         </div>
 
-        <!-- ЭКРАН ПОДАРКА -->
         <div id="gift-screen">
             <img src="gift.png" alt="Подарок" class="gift-img">
             <div class="gift-text">🌷 Нарисуй свои цветы для мамы! 🌷</div>
@@ -486,14 +479,20 @@
         // ========== ПЕРЕМЕННЫЕ ==========
         let gameStage = 0; // 0 - старт, 1 - угадай, 2 - сбор
         let hintIndex = 0; // 0 - ромашка, 1 - роза, 2 - тюльпан
+        let canTransition = false; // Флаг для перехода после звука
         const correctFlowers = ['romashka', 'rosa', 'tulpan'];
         
-        // Счётчики для сбора (по 8 каждого)
+        // Счётчики для сбора
         let leftToCollect = {
-            romashka: 8,
-            rosa: 8,
-            tulpan: 8
+            romashka: 4,
+            rosa: 2,
+            tulpan: 5
         };
+
+        // Для перетаскивания
+        let draggedFlower = null;
+        let isDragging = false;
+        let startX, startY, startLeft, startTop;
 
         // Звуки
         const sounds = {
@@ -516,19 +515,25 @@
             sounds[key].load();
         }
 
-        function playSound(soundName) {
+        function playSound(soundName, callback) {
             try {
                 if (sounds[soundName]) {
                     sounds[soundName].pause();
                     sounds[soundName].currentTime = 0;
+                    
+                    if (callback) {
+                        sounds[soundName].onended = callback;
+                    }
+                    
                     sounds[soundName].play().catch(e => console.log('Аудио не воспроизвелось:', e));
                 }
             } catch (e) {
                 console.log('Ошибка воспроизведения звука:', e);
+                if (callback) callback();
             }
         }
 
-        // ========== РАССТАВЛЯЕМ ПОЗИЦИИ ДЛЯ 24 ЦВЕТОВ ==========
+        // ========== ПОЗИЦИИ ДЛЯ 24 ЦВЕТОВ ==========
         function positionGridFlowers() {
             const positions = [
                 'pos-1', 'pos-2', 'pos-3', 'pos-4', 'pos-5', 'pos-6',
@@ -539,9 +544,8 @@
             
             const gridFlowers = document.querySelectorAll('.grid-flower');
             gridFlowers.forEach((flower, index) => {
-                // Убираем все предыдущие классы позиций
-                flower.className = 'grid-flower hidden'; // Сбрасываем
-                flower.classList.add(positions[index]); // Добавляем новую позицию
+                flower.className = 'grid-flower hidden';
+                flower.classList.add(positions[index]);
             });
         }
 
@@ -550,19 +554,16 @@
             document.getElementById('start-btn').classList.add('hidden');
             gameStage = 1;
             hintIndex = 0;
+            canTransition = false;
             playSound('Zvuk1');
             
             document.getElementById('konvert').classList.remove('hidden');
             
-            // Показываем только первые 6 цветов
             document.querySelectorAll('.flower').forEach(f => f.classList.remove('hidden'));
-            
-            // Убеждаемся, что все 24 цветка второго этапа скрыты
             document.querySelectorAll('.grid-flower').forEach(f => {
                 f.classList.add('hidden');
             });
             
-            // Расставляем позиции
             positionGridFlowers();
         }
 
@@ -601,7 +602,17 @@
                 } else if (hintIndex === 1) {
                     playSound('Zvuk6');
                 } else if (hintIndex === 2) {
-                    playSound('Zvuk8');
+                    playSound('Zvuk8', function() {
+                        // После окончания звука тюльпана разрешаем переход
+                        if (hintIndex === 2) {
+                            canTransition = true;
+                            // Проверяем, все ли цветы угаданы
+                            if (hintIndex >= 2) {
+                                playSound('Zvuk9');
+                                startSecondStage();
+                            }
+                        }
+                    });
                 }
                 
                 element.classList.add('found');
@@ -611,16 +622,15 @@
                     document.getElementById('konvert').classList.remove('bounce');
                 }, 500);
                 
-                setTimeout(() => {
-                    hintIndex++;
-                    
-                    if (hintIndex < 3) {
-                        document.getElementById('konvert').classList.remove('hidden');
-                    } else {
-                        playSound('Zvuk9');
-                        startSecondStage();
-                    }
-                }, 800);
+                if (flowerName !== 'tulpan') {
+                    setTimeout(() => {
+                        hintIndex++;
+                        
+                        if (hintIndex < 3) {
+                            document.getElementById('konvert').classList.remove('hidden');
+                        }
+                    }, 800);
+                }
             } else {
                 playSound('Zvuk4');
                 element.classList.add('shake');
@@ -636,54 +646,144 @@
 
         // ========== ВТОРОЙ ЭТАП ==========
         function startSecondStage() {
+            if (gameStage !== 1) return;
+            if (hintIndex === 2 && !canTransition) return; // Ждём окончания звука тюльпана
+            
             gameStage = 2;
             
             document.getElementById('konvert').classList.add('hidden');
-            
-            // Прячем первые 6 цветов
             document.querySelectorAll('.flower').forEach(f => f.classList.add('hidden'));
-            
-            // Показываем 24 цветка второго этапа
-            document.querySelectorAll('.grid-flower').forEach(f => {
-                f.classList.remove('hidden');
-            });
+            document.querySelectorAll('.grid-flower').forEach(f => f.classList.remove('hidden'));
             
             document.getElementById('korzina').classList.remove('hidden');
             document.getElementById('counters').classList.remove('hidden');
             
-            leftToCollect = { romashka: 8, rosa: 8, tulpan: 8 };
+            leftToCollect = { romashka: 4, rosa: 2, tulpan: 5 };
             updateCounters();
         }
 
-        // ========== СБОР ЦВЕТКА (второй этап) ==========
-        function collectGridFlower(flower) {
+        // ========== ПЕРЕТАСКИВАНИЕ ==========
+        function startDrag(e) {
             if (gameStage !== 2) return;
+            e.preventDefault();
             
-            const flowerName = flower.dataset.name;
+            const flower = e.target;
+            if (flower.classList.contains('found')) return;
             
-            if (leftToCollect[flowerName] > 0) {
-                leftToCollect[flowerName]--;
-                updateCounters();
+            draggedFlower = flower;
+            isDragging = true;
+            draggedFlower.classList.add('dragging');
+            
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const rect = draggedFlower.getBoundingClientRect();
+            const containerRect = document.getElementById('game-container').getBoundingClientRect();
+            
+            startX = clientX - rect.left;
+            startY = clientY - rect.top;
+            startLeft = rect.left - containerRect.left;
+            startTop = rect.top - containerRect.top;
+            
+            draggedFlower.style.left = startLeft + 'px';
+            draggedFlower.style.top = startTop + 'px';
+            draggedFlower.style.zIndex = '100';
+            
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('touchmove', dragMove, { passive: false });
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        function dragMove(e) {
+            if (!isDragging || !draggedFlower) return;
+            e.preventDefault();
+            
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const containerRect = document.getElementById('game-container').getBoundingClientRect();
+            
+            let newLeft = clientX - startX - containerRect.left;
+            let newTop = clientY - startY - containerRect.top;
+            
+            const flowerWidth = draggedFlower.offsetWidth;
+            const flowerHeight = draggedFlower.offsetHeight;
+            
+            newLeft = Math.max(0, Math.min(newLeft, containerRect.width - flowerWidth));
+            newTop = Math.max(0, Math.min(newTop, containerRect.height - flowerHeight));
+            
+            draggedFlower.style.left = newLeft + 'px';
+            draggedFlower.style.top = newTop + 'px';
+        }
+
+        function dragEnd(e) {
+            if (!isDragging || !draggedFlower) return;
+            
+            // Проверяем, попал ли цветок в корзину
+            const korzina = document.getElementById('korzina').getBoundingClientRect();
+            const flowerRect = draggedFlower.getBoundingClientRect();
+            const flowerCenterX = flowerRect.left + flowerRect.width / 2;
+            const flowerCenterY = flowerRect.top + flowerRect.height / 2;
+            
+            const expandedKorzina = {
+                left: korzina.left - 20,
+                right: korzina.right + 20,
+                top: korzina.top - 20,
+                bottom: korzina.bottom + 20
+            };
+            
+            if (flowerCenterX >= expandedKorzina.left && flowerCenterX <= expandedKorzina.right &&
+                flowerCenterY >= expandedKorzina.top && flowerCenterY <= expandedKorzina.bottom) {
                 
-                document.getElementById('korzina').classList.add('bounce');
-                setTimeout(() => {
-                    document.getElementById('korzina').classList.remove('bounce');
-                }, 500);
+                const flowerName = draggedFlower.dataset.name;
                 
-                flower.classList.add('found');
-                
-                if (leftToCollect.romashka === 0 && leftToCollect.rosa === 0 && leftToCollect.tulpan === 0) {
-                    playSound('Zvuk10');
+                if (leftToCollect[flowerName] > 0) {
+                    // Правильный сбор
+                    leftToCollect[flowerName]--;
+                    updateCounters();
+                    
+                    document.getElementById('korzina').classList.add('bounce');
                     setTimeout(() => {
-                        showBouquetScreen();
+                        document.getElementById('korzina').classList.remove('bounce');
                     }, 500);
+                    
+                    draggedFlower.classList.add('found');
+                    
+                    if (leftToCollect.romashka === 0 && leftToCollect.rosa === 0 && leftToCollect.tulpan === 0) {
+                        setTimeout(() => {
+                            showBouquetScreen();
+                        }, 500);
+                    }
+                } else {
+                    // Лишний цветок - звук 10
+                    playSound('Zvuk10');
+                    returnFlowerToStart(draggedFlower);
                 }
             } else {
-                playSound('Zvuk4');
-                flower.classList.add('shake');
-                setTimeout(() => {
-                    flower.classList.remove('shake');
-                }, 400);
+                // Не попал в корзину - возвращаем
+                returnFlowerToStart(draggedFlower);
+            }
+            
+            // Очищаем
+            draggedFlower.classList.remove('dragging');
+            draggedFlower.style.zIndex = '10';
+            draggedFlower = null;
+            isDragging = false;
+            
+            document.removeEventListener('mousemove', dragMove);
+            document.removeEventListener('touchmove', dragMove);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchend', dragEnd);
+        }
+
+        function returnFlowerToStart(flower) {
+            // Возвращаем на исходную позицию по классу
+            const classes = flower.className.split(' ');
+            const posClass = classes.find(c => c.startsWith('pos-'));
+            if (posClass) {
+                flower.className = 'grid-flower';
+                flower.classList.add(posClass);
             }
         }
 
@@ -706,13 +806,13 @@
         function showBouquetScreen() {
             gameStage = 3;
             document.getElementById('bouquet-screen').style.display = 'flex';
+            playSound('Zvuk11'); // Только 11 звук
         }
 
         function showGiftScreen() {
             document.getElementById('bouquet-screen').style.display = 'none';
             document.getElementById('gift-screen').style.display = 'flex';
-            playSound('Zvuk11');
-            playSound('Zvuk12');
+            playSound('Zvuk12'); // Только 12 звук после нажатия
         }
 
         function downloadPDF() {
@@ -724,19 +824,18 @@
             document.getElementById('gift-screen').style.display = 'none';
             gameStage = 0;
             hintIndex = 0;
+            canTransition = false;
             
             document.getElementById('start-btn').classList.remove('hidden');
             document.getElementById('konvert').classList.add('hidden');
             document.getElementById('korzina').classList.add('hidden');
             document.getElementById('counters').classList.add('hidden');
             
-            // Возвращаем первые 6 цветов
             document.querySelectorAll('.flower').forEach(f => {
                 f.classList.remove('hidden');
                 f.classList.remove('found');
             });
             
-            // Прячем 24 цветка
             document.querySelectorAll('.grid-flower').forEach(f => {
                 f.classList.add('hidden');
                 f.classList.remove('found');
@@ -746,7 +845,7 @@
             document.getElementById('counter-rosa').classList.remove('completed');
             document.getElementById('counter-tulpan').classList.remove('completed');
             
-            leftToCollect = { romashka: 8, rosa: 8, tulpan: 8 };
+            leftToCollect = { romashka: 4, rosa: 2, tulpan: 5 };
             updateCounters();
         }
 
@@ -754,7 +853,7 @@
         window.startGame = startGame;
         window.nextHint = nextHint;
         window.checkFlower = checkFlower;
-        window.collectGridFlower = collectGridFlower;
+        window.startDrag = startDrag;
         window.showGiftScreen = showGiftScreen;
         window.downloadPDF = downloadPDF;
         window.resetGame = resetGame;
